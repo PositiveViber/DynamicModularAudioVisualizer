@@ -1,38 +1,180 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* This will prevent scrolling */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+}
+
+
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('//public/background.png'); /* Update with the correct path */
+  background-repeat: repeat; /* To tile the background */
+  background-size: contain; /* To cover the entire area; adjust as needed */
+  animation: oscillateBackground 10s ease-in-out infinite; /* Adjust time for speed */
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  width: 100%; /* Full width */
+  max-width: 900px; /* Maximum width, adjust as needed */
+}
+
+.content-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  outline: none;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@keyframes oscillateBackground {
+  0%, 100% {
+    background-position: center left;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    background-position: center right;
   }
+}
+
+.sun-icon {
+  position: absolute;
+  top: 10px;
+  width: 300px; /* Adjust size as needed */
+  animation: spin 4s linear infinite; /* Adjust timing as needed */
+}
+
+.sun-icon-right {
+  right: 10px;
+  z-index: 1;
+}
+
+.sun-icon-left {
+  left: 10px;
+  z-index: 1;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* Base style for the leaves container */
+.leaves {
+  opacity: 0; /* Start with leaves invisible */
+  position: absolute;
+  top: 0; /* Start from the top */
+  left: 0; /* Start from the left */
+  width: 100%; /* Take the full width */
+  height: 100%; /* Take the full height */
+  background-image: url('/public/leaves.png'); /* Replace with the path to your leaves image */
+/* Repeat the leaves image horizontally */
+  background-size: 105%; /* Adjust height to 100% and width auto to maintain aspect ratio */
+  transition: transform 1s ease-in-out;
+  transform: translateY(-100%); /* Start above the view */
+
+}
+
+.button-container{
+  z-index: 1;
+}
+
+
+/* Define the pop-in and pop-out animations */
+@keyframes popIn {
+  0% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes popOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* When the leaves pop in, change to visible and apply animation */
+.pop-in {
+  animation: popIn 1s forwards; /* 'forwards' will keep the state at the end of the animation */
+  opacity: 1; /* End with leaves visible */
+}
+
+/* When the leaves pop out, reverse the animation */
+.pop-out {
+  animation: popOut 1s forwards;
+}
+
+.text {
+  font-family: 'Arial', sans-serif; /* You can replace 'Arial' with any psychedelic font you prefer */
+  font-size: 48px; /* Adjust the font size as needed */
+  color: #ff00ff; /* Bright pink color */
+  text-shadow: 2px 2px 4px #00ffff; /* Cyan shadow */
+  overflow: hidden; /* Hide overflow to prevent the dots from being visible before animation */
+  position: relative; /* Position relative for absolute positioning */
+  left: 0px;
+}
+
+
+
+@keyframes typing {
+  0% {
+    content: "Visualizing";
+  }
+  20% {
+    content: "Visualizing.";
+  }
+  40% {
+    content: "Visualizing..";
+  }
+  60% {
+    content: "Visualizing...";
+  }
+  80% {
+    content: "Visualizing....";
+  }
+  100% {
+    content: "Visualizing.....";
+  }
+}
+
+.text p::after {
+  content: ""; /* Create a pseudo-element */
+  display: inline-block;
+  width: 0;
+  animation: typing 3s steps(10, end) infinite; /* Adjust timing and steps as needed */
 }
