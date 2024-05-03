@@ -1,0 +1,8 @@
+pip install
+Flask
+Flask-SocketIO
+Flask-CORS
+pyaudio
+numpy
+scipy
+matplotlib

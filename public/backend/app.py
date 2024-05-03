@@ -31,7 +31,9 @@ def audio_plot():
     return jsonify({"error": "Plot not found"}), 404
 
 @app.route('/fft_data')
+
 def get_fft_data():
+    """FFT Data Being Transfered In Sockets"""
     xf, yf = get_cached_fft_data()
     if xf and yf:
         return jsonify(xf=xf, yf=yf)
@@ -40,6 +42,7 @@ def get_fft_data():
 
 @socketio.on('start_visualization')
 def handle_start_visualization():
+    """Create socket and allow data for viusalization.jsx"""
     print('Visualization started')
     data = prepare_visualization_data()
     if data:
@@ -50,40 +53,43 @@ def handle_start_visualization():
     
 @socketio.on('start_recording')
 def handle_start_recording():
+    """Indicate Start Reporting :("""
     print("Started recording")
     start_audio_stream()
     
 @socketio.on('stop_recording')
 def handle_stop_recording():
+    """Indicate Stop Reporting :)"""
     print("Stopped recording")
-    frames = stop_audio_stream()  # This should stop recording and return the recorded frames.
-    
+    frames = stop_audio_stream() 
+
+     # if avaliable, will calculate and cache the FFT data for data transfer.
     if frames:
-        save_audio(frames)  # This should save the audio data to a file.
+        save_audio(frames) 
+        cache_fft_data(frames) 
+    # After conversion be able to retrieve the cached FFT data.
+        xf, yf = get_cached_fft_data()  
         
-        # Here's where you'd determine your sample_rate, either by a constant you've set
-        # elsewhere in your code, or by inspecting the audio data, etc.
-        sample_rate = 44100  # or whatever your sample rate is
-
-        # Calculate FFT data immediately before sending
-        xf, yf = calculate_fft(frames, sample_rate)
-
-        # Assuming plot_waveform_and_spectrum can use the same data
-        plot_waveform_and_spectrum(xf, yf, frames)
-
-        print('Emitting visualization_data', {'xf': list(xf), 'yf': list(yf)})
-        emit('visualization_data', {'xf': list(xf), 'yf': list(yf)})  # Emit both frequency bins and amplitudes.
+        if xf and yf:
+            plot_waveform_and_spectrum(xf, yf, frames)
+            emit('visualization_data', {'xf': list(xf), 'yf': list(yf)})  # Emit both frequency bins and amplitudes.
+        else:
+            print('FFT data could not be calculated.')
+            emit('error', {'message': 'FFT data could not be calculated.'})
     else:
         emit('error', {'message': 'No audio was recorded'})
 
 
 @socketio.on('connect')
 def on_connect():
+    """Establish Connection with Server"""
     print('Client connected')
 
 @socketio.on('disconnect')
 def on_disconnect():
+    """Establish Disconnection with Server"""
     print('Client disconnected')
 
 if __name__ == '__main__':
+    """Run the app"""
     socketio.run(app, debug=True)
